@@ -1,63 +1,99 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Platform,
+  SafeAreaView,
+  FlatList,
+  View,
+  TextInput,
+  Text,
+} from "react-native";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { HelloWave } from "@/components/HelloWave";
+import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { Ionicons } from "@expo/vector-icons";
+import { sampleFeaturedCourses } from "@/data/courses";
+import SimpleCourseCard from "@/components/courses/SampleCourseCard";
+import React, { useEffect, useState } from "react";
+import { getCourses } from "@/service/course.service";
+import { StatusBar } from "expo-status-bar";
 
 export default function HomeScreen() {
+  const [allCourses, setAllCourses] = useState(sampleFeaturedCourses);
+  useEffect(() => {
+    const getCourse = async () => {
+      const res = await getCourses();
+      setAllCourses(res);
+    };
+    getCourse();
+  }, []);
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView className="flex-1 bg-gndarkblue ">
+      <FlatList
+        ListHeaderComponent={() => (
+          <View>
+            <View className="mt-5 bg-gndarkblue text-white flex justify-center items-center">
+              <Image
+                height={20}
+                width={20}
+                source={require("../../assets/images/logo.png")}
+                style={{ backgroundColor: "lightgray" }}
+              />
+            </View>
+            <View className="bg-gndarkblue text-white  flex justify-center items-center">
+              <Text className="text-white text-center my-5 text-3xl font-bold">
+                Welcome to Global Nexus Institute !! Learn & Earn
+              </Text>
+              <Text className="text-white text-center my-5 text-lg font-bold">
+                Gain insights from industry leaders at Global Nexus Institute.
+                Our expert-led sessions offer valuable knowledge in Data
+                Science, Computer Basics, AI, and Cyber-Security. Enhance your
+                skills and stay ahead in your field with us.
+              </Text>
+            </View>
+
+            <View
+              style={{
+                marginLeft: 3,
+                marginRight: 3,
+                width: "100%",
+                height: 50,
+              }}
+              className="flex flex-row bg-gndarkblue px-2 items-center border rounded-lg gap-4 bg-white"
+            >
+              <Ionicons name="search" size={18} color="gray" />
+              <TextInput
+                placeholder="Search..."
+                className="flex"
+                style={{ color: "gray", width: "85%" }}
+                placeholderTextColor="gray"
+                onChangeText={() => {
+                  return;
+                }}
+              />
+              <Ionicons name="mic" size={18} color="gray" />
+            </View>
+            <View className="bg-gndarkblue text-white  flex justify-center items-start pl-3">
+              <Text className="text-white my-5 text-2xl pl-3 font-bold ">
+                Course Overview
+              </Text>
+            </View>
+          </View>
+        )}
+        data={allCourses}
+        renderItem={({ item }) => <SimpleCourseCard course={item} />}
+      />
+      <StatusBar style="light" />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   stepContainer: {
@@ -69,6 +105,6 @@ const styles = StyleSheet.create({
     width: 290,
     bottom: 0,
     left: 0,
-    position: 'absolute',
+    position: "absolute",
   },
 });
