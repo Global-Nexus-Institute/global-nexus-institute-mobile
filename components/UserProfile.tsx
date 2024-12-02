@@ -13,7 +13,7 @@ export default function UserProfile({
 }: {
   toggleView: (view: string) => void;
 }) {
-  const { user, loading, logout } = useAuth();
+  const { user, loading, logout, authUserData } = useAuth();
 
   const [view, setView] = useState("ongoing");
 
@@ -41,13 +41,12 @@ export default function UserProfile({
               backgroundColor: "#00000070",
             }}
           >
-           {user?.email}
+           {authUserData?.names}
           </Text>
         </ImageBackground>
         <View
           className="shadow-lg shadow-gndarkblue text-white text-center rounded-full border border-gndarkblue text-3xl font-bold"
           style={{
-            backgroundColor: "lightgray",
             height: 90,
             width: 90,
             borderRadius: 50,
@@ -57,7 +56,7 @@ export default function UserProfile({
             zIndex: 10,
             bottom: -30,
           }}
-        ></View>
+        ><Image source={{uri: user?.photoURL ?? "https://picsum.photos/200/300"}} /></View>
       </View>
 
       <View className="bg-gndarkblue text-white flex flex-row justify-between items-start ">
