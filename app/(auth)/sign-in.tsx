@@ -16,6 +16,7 @@ export default function SignInScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
+
   const [fieldNames, setFliedNames] = useState({ email: "", password: "" });
   const handleChange = (name: string, value: string) => {
     setFliedNames({ ...fieldNames, [name]: value });
@@ -25,9 +26,9 @@ export default function SignInScreen() {
     setLoading(true);
     try {
       const res = await login(fieldNames.email, fieldNames.password);
-      if (res.names) {
+      if (res !== null) {
         Alert.alert("Success", "Login successful! Welcome back. " + res.names);
-        router.replace("/(tabs)/profile");
+        router.back();
       }
       setLoading(false);
     } catch (error) {
