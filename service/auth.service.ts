@@ -33,9 +33,8 @@ export const logout = async () => {
   
 };
 
-export const getAuthUser = async () => {
-  const token = await AsyncStorage.getItem("userToken");
-  const uid = await AsyncStorage.getItem("userUID");
+export const getAuthUser = async (uid: string, token: string) => {
+  
   const res = await apiClient.get(`${endpoints.auth.authUser}/${uid}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
