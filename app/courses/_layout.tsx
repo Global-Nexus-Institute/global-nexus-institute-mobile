@@ -6,9 +6,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { useAuth } from "@/providers/AuthProvider";
 
-export default function CooursePage() {
+export default function CoursePage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, authUserData } = useAuth();
 
   return (
     <SafeAreaView className="flex-1 bg-gndarkblue">
@@ -27,8 +27,8 @@ export default function CooursePage() {
             </TouchableOpacity>
           </View>
           <View>
-            {user ? (
-              <Text className="text-white">{`${user.email}`}</Text>
+            {authUserData ? (
+              <Text className="text-white">{`${authUserData.names}`}</Text>
             ) : (
               <TouchableOpacity
                 onPress={() => {
