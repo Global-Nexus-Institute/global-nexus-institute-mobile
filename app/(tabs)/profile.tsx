@@ -1,18 +1,16 @@
 import {
-  StyleSheet,
   SafeAreaView,
   View,
   Text,
   TouchableOpacity,
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import { sampleFeaturedCourses } from "@/data/courses";
 import UserCourses from "@/components/courses/UserCourses";
 import UserProfile from "@/components/UserProfile";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/providers/AuthProvider";
-import { getAuthUser } from "@/service/auth.service";
 import { UsersDataType } from "@/utils/data-types";
+import { useRouter } from "expo-router";
 
 export default function ProfileScreen() {
   const [view, setView] = useState("ongoing");
@@ -20,36 +18,44 @@ export default function ProfileScreen() {
     setView((prev) => (prev = selectedView));
   };
 
+  const router = useRouter();
+
   const [authUser, setAuhtUser] = useState<UsersDataType>();
 
-  const { user, loading, logout } = useAuth();
-
-  useEffect(() => {
-    const getAuth = async () => {
-      const res = await getAuthUser();
-      setAuhtUser(res);
-    };
-    getAuth();
-  }, []);
+  const { user, authUserData, logout } = useAuth();
 
   return (
     <SafeAreaView className="flex-1 bg-gndarkblue">
-      <FlatList
-        ListHeaderComponent={() => <UserProfile toggleView={toggleView} />}
-        data={sampleFeaturedCourses}
-        renderItem={({ item }) =>
-          view == "completed" ? (
-            <UserCourses course={item} percentage={100} />
-          ) : (
-            <UserCourses course={item} percentage={50} />
-          )
-        }
-      />
+      {authUserData ? (
+        <FlatList
+          ListHeaderComponent={() => <UserProfile toggleView={toggleView} />}
+          data={authUserData?.courses ?? []}
+          renderItem={({ item }) =>
+            view == "completed" ? (
+              <UserCourses course={item} percentage={100} />
+            ) : (
+              <UserCourses course={item} percentage={50} />
+            )
+          }
+        />
+      ) : (
+        <View className="flex-1 justify-center items-center">
+          <TouchableOpacity
+            onPress={() => {
+              router.push("/sign-in");
+            }}
+          >
+            <Text className="text-4xl text-center font-bold text-white">
+              Please Login
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
       {user && (
         <View className="bg-gnLighBlue" style={{ height: 100 }}>
           <TouchableOpacity onPress={logout}>
             <Text className="text-4xl text-center font-bold text-white">
-              Logout {authUser?.email}
+              Logout
             </Text>
           </TouchableOpacity>
         </View>
@@ -57,16 +63,3 @@ export default function ProfileScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  headerImage: {
-    color: "#808080",
-    bottom: -90,
-    left: -35,
-    position: "absolute",
-  },
-  titleContainer: {
-    flexDirection: "row",
-    gap: 8,
-  },
-});
