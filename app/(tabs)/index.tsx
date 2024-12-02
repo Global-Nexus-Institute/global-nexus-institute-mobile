@@ -19,70 +19,84 @@ import SimpleCourseCard from "@/components/courses/SampleCourseCard";
 import React, { useEffect, useState } from "react";
 import { getCourses } from "@/service/course.service";
 import { StatusBar } from "expo-status-bar";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function HomeScreen() {
   const [allCourses, setAllCourses] = useState(sampleFeaturedCourses);
+  const [filteredCourses, setFilteredCourses] = useState(sampleFeaturedCourses); // Filtered dataset
   useEffect(() => {
     const getCourse = async () => {
       const res = await getCourses();
       setAllCourses(res);
+      setFilteredCourses(res);
     };
     getCourse();
   }, []);
+
+  const handleSearch = (text: string) => {
+    if (text.trim() === "") {
+      setFilteredCourses(allCourses); // Reset to all courses if input is empty
+      return;
+    }
+
+    const filtered = allCourses.filter((course) =>
+      course.name.toLowerCase().includes(text.toLowerCase()),
+    );
+    setFilteredCourses(filtered);
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-gndarkblue ">
-      <FlatList
-        ListHeaderComponent={() => (
-          <View>
-            <View className="mt-5 bg-gndarkblue text-white flex justify-center items-center">
-              <Image
-                height={20}
-                width={20}
-                source={require("../../assets/images/logo.png")}
-                style={{ backgroundColor: "lightgray" }}
-              />
-            </View>
-            <View className="bg-gndarkblue text-white  flex justify-center items-center">
-              <Text className="text-white text-center my-5 text-3xl font-bold">
-                Welcome to Global Nexus Institute !! Learn & Earn
-              </Text>
-              <Text className="text-white text-center my-5 text-lg font-bold">
-                Gain insights from industry leaders at Global Nexus Institute.
-                Our expert-led sessions offer valuable knowledge in Data
-                Science, Computer Basics, AI, and Cyber-Security. Enhance your
-                skills and stay ahead in your field with us.
-              </Text>
-            </View>
-
-            <View
-              style={{
-                marginLeft: 3,
-                marginRight: 3,
-                width: "100%",
-                height: 50,
-              }}
-              className="flex flex-row bg-gndarkblue px-2 items-center border rounded-lg gap-4 bg-white"
-            >
-              <Ionicons name="search" size={18} color="gray" />
-              <TextInput
-                placeholder="Search..."
-                className="flex"
-                style={{ color: "gray", width: "85%" }}
-                placeholderTextColor="gray"
-                onChangeText={() => {
-                  return;
-                }}
-              />
-              <Ionicons name="mic" size={18} color="gray" />
-            </View>
-            <View className="bg-gndarkblue text-white  flex justify-center items-start pl-3">
-              <Text className="text-white my-5 text-2xl pl-3 font-bold ">
-                Course Overview
-              </Text>
-            </View>
+      <ScrollView>
+        <View>
+          <View className="mt-5 bg-gndarkblue text-white flex justify-center items-center">
+            <Image
+              height={20}
+              width={20}
+              source={require("../../assets/images/logo.png")}
+              style={{ backgroundColor: "lightgray" }}
+            />
           </View>
-        )}
-        data={allCourses}
+          <View className="bg-gndarkblue text-white  flex justify-center items-center">
+            <Text className="text-white text-center my-5 text-3xl font-bold">
+              Welcome to Global Nexus Institute !! Learn & Earn
+            </Text>
+            <Text className="text-white text-center my-5 text-lg font-bold">
+              Gain insights from industry leaders at Global Nexus Institute. Our
+              expert-led sessions offer valuable knowledge in Data Science,
+              Computer Basics, AI, and Cyber-Security. Enhance your skills and
+              stay ahead in your field with us.
+            </Text>
+          </View>
+
+          <View
+            style={{
+              marginLeft: 3,
+              marginRight: 3,
+              width: "100%",
+              height: 50,
+            }}
+            className="flex flex-row bg-gndarkblue px-2 items-center border rounded-lg gap-4 bg-white"
+          >
+            <Ionicons name="search" size={18} color="gray" />
+            <TextInput
+              placeholder="Search..."
+              className="flex"
+              style={{ color: "gray", width: "85%" }}
+              placeholderTextColor="gray"
+              onChangeText={handleSearch}
+            />
+            <Ionicons name="mic" size={18} color="gray" />
+          </View>
+          <View className="bg-gndarkblue text-white  flex justify-center items-start pl-3">
+            <Text className="text-white my-5 text-2xl pl-3 font-bold ">
+              Course Overview
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+      <FlatList
+        data={filteredCourses}
         renderItem={({ item }) => <SimpleCourseCard course={item} />}
       />
       <StatusBar style="light" />
