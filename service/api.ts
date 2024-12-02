@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: "https://global-nexus-inbstitute-api-v1.onrender.com/api-v1", //http://localhost:5000/api-v1
+  baseURL: "https://global-nexus-inbstitute-api-v1.onrender.com/api-v1", //
+  // baseURL: "http://localhost:5000/api-v1",
   timeout: 60000,
   headers: {
     Accept: "application/json",
